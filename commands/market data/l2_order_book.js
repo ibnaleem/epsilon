@@ -1,11 +1,12 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 require('dotenv').config();
 const blockchainApiKey = process.env.BLOCKCHAIN_API_KEY;
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('l2-order-book')
         .setDescription("Level 2 Order Book data")
-        .addUserOption(option => option.setName('symbol').setDescription('Blockchain symbol identifier, e.g., BTC-USD').setRequired(true)),
+        .addStringOption(option => option.setName('symbol').setDescription('Blockchain symbol identifier, e.g., BTC-USD').setRequired(true)),
     
         async execute(interaction) {
             const symbol = interaction.options.getString('symbol');
@@ -46,7 +47,7 @@ module.exports = {
                     .setTimestamp()
                     .setFooter({ text: 'Data provided by Blockchain.com' });
 
-                // Send the embed in response to the interaction
+            
                 await interaction.reply({ embeds: [orderBookEmbed] });
 
             } catch (error) {
