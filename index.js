@@ -5,7 +5,7 @@ const { REST, Routes } = require('discord.js');
 
 require('dotenv').config();
 const token = process.env.EPSILON_TOKEN;
-const clientId = 1259197607826292769;
+const clientId = '1259197607826292769';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.commands = new Collection();
