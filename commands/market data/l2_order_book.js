@@ -2,27 +2,31 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 require('dotenv').config();
 const blockchainApiKey = process.env.BLOCKCHAIN_API_KEY;
 
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('l2-order-book')
-        .setDescription("Level 2 Order Book data")
-        .addStringOption(option => option.setName('symbol').setDescription('Blockchain symbol identifier, e.g., BTC-USD').setRequired(true)),
-    
+        .setDescription('Level 2 Order Book Data')
+        .addStringOption(option => 
+            option.setName('symbol')
+            .setDescription('Blockchain symbol identifier, e.g., BTC-USD')
+            .setRequired(true)),
+
         async execute(interaction) {
-            const symbol = interaction.options.getString('symbol');
+            const symbol = interaction.options.getString("symbol");
             const headers = {
                 'Accept': 'application/json',
                 'X-API-Token': blockchainApiKey
-            };
+            }
 
             try {
+                const fetch = await import('node-fetch').then(module => module.default);
                 const response = await fetch(`https://api.blockchain.com/v3/exchange/l2/${symbol}`, {
                     method: 'GET',
                     headers: headers
                 });
+
                 const data = await response.json();
-                
-                const symbol = data.symbol;
                 const bids = data.bids;
                 const asks = data.asks;
 
@@ -38,21 +42,26 @@ module.exports = {
                     value: `Quantity: ${ask.qty}, Number: ${ask.num}`,
                     inline: true
                 }));
+                
+                //const combinedFields = bidFields.concat(askFields).slice(0, 25);
+                const slicedBids = bidFields.slice(0,10);
+                const slicedAsk = askFields.slice(0,10);
 
                 const orderBookEmbed = new EmbedBuilder()
                     .setColor(0x0099ff)
                     .setTitle(`Level 2 Order Book for ${symbol}`)
-                    .addFields(bidFields)
-                    .addFields(askFields)
+                    .addFields(slicedBids)
+                    .addFields
                     .setTimestamp()
                     .setFooter({ text: 'Data provided by Blockchain.com' });
 
             
                 await interaction.reply({ embeds: [orderBookEmbed] });
+                
 
             } catch (error) {
                 console.error('Error fetching order book data:', error);
                 await interaction.reply(`There was an error fetching the order book data for ${symbol}. Please try again later.`);
-            }
+
         }
-};
+}}
