@@ -54,8 +54,8 @@ module.exports = {
       await interaction.reply({ embeds: [tickersEmbed] });
 
     } catch (error) {
-      console.error('Error fetching order book data:', error);
-      await interaction.reply(`There was an error fetching the order book data for ${symbol}. Please try again later.`);
+      console.error('Error fetching tickers data:', error);
+      await interaction.reply(`There was an error fetching tickers data for ${symbol}. Please try again later.`);
     }
   }
 };
